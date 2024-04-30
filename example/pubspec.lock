@@ -42,7 +42,7 @@ packages:
     source: hosted
     version: "1.18.0"
   drag_select_grid_view:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       path: ".."
       relative: true

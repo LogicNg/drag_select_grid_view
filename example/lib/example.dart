@@ -23,7 +23,7 @@ class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
-  _MyAppState createState() => _MyAppState();
+  State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
@@ -50,7 +50,6 @@ class _MyAppState extends State<MyApp> {
         title: const Text('Grid Example'),
       ),
       body: DragSelectGridView(
-        crossAxisCount: 7,
         scrollController: sc,
         shrinkWrap: true,
         gridController: controller,

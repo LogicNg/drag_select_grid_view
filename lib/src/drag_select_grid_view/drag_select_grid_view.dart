@@ -95,7 +95,6 @@ class DragSelectGridView extends StatefulWidget {
     this.restorationId,
     this.clipBehavior = Clip.hardEdge,
     this.impliesAppBarDismissal = true,
-    this.crossAxisCount,
   })  : autoScrollHotspotHeight =
             autoScrollHotspotHeight ?? defaultAutoScrollHotspotHeight,
         scrollController = scrollController ?? ScrollController(),
@@ -188,8 +187,6 @@ class DragSelectGridView extends StatefulWidget {
   /// Refer to [LocalHistoryEntry.impliesAppBarDismissal].
   final bool impliesAppBarDismissal;
 
-  final int? crossAxisCount;
-
   @override
   DragSelectGridViewState createState() => DragSelectGridViewState();
 }
@@ -200,10 +197,7 @@ class DragSelectGridView extends StatefulWidget {
 class DragSelectGridViewState extends State<DragSelectGridView>
     with AutoScrollerMixin<DragSelectGridView> {
   final _elements = <SelectableElement>{};
-
-  late final _selectionManager =
-      SelectionManager(crossAxisCount: widget.crossAxisCount);
-
+  final _selectionManager = SelectionManager();
   LongPressMoveUpdateDetails? _lastMoveUpdateDetails;
   LocalHistoryEntry? _historyEntry;
 

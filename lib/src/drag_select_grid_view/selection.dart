@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 
@@ -15,14 +13,6 @@ import '../misc/utils.dart';
 /// more didactic, since you can easily link the UI action to it's consequence
 /// regarding selection.
 class SelectionManager {
-  /// Creates a new [SelectionManager].
-
-  SelectionManager({this.crossAxisCount});
-
-  /// The amount of items in the grid.
-
-  final int? crossAxisCount;
-
   /// The index in which the drag started.
   int get dragStartIndex => _dragStartIndex;
   var _dragStartIndex = -1;
@@ -65,10 +55,19 @@ class SelectionManager {
     }
   }
 
+  void toggleSelect(int index) {
+    if (_selectedIndexes.contains(index)) {
+      _selectedIndexes.remove(index);
+    } else {
+      _selectedIndexes.add(index);
+    }
+  }
+
   /// Adds the [index] to [_selectedIndexes] and allows [updateDrag] calls.
   void startDrag(int index) {
     _dragStartIndex = _dragEndIndex = index;
-    _selectedIndexes.add(index);
+    // _selectedIndexes.add(index);
+    toggleSelect(index);
   }
 
   /// Updates the [_selectedIndexes], adding/removing one or more indexes, based
@@ -78,24 +77,34 @@ class SelectionManager {
   ///
   ///   * [index] is negative.
   ///   * Drag didn't start.
+  // void updateDrag(int index) {
+  //   if (index < 0) return;
+  //   if ((_dragStartIndex == -1) || (_dragEndIndex == -1)) return;
+
+  //   // If the drag is both forward and backward, drag to the start index,
+  //   // and then continue the drag, whether it is forward or backward.
+  //   if ((index < dragStartIndex) && (index < dragEndIndex) ||
+  //       (index > dragStartIndex) && (index > dragEndIndex)) {
+  //     _updateDragForwardOrBackward(_dragStartIndex);
+  //     _dragEndIndex = _dragStartIndex;
+  //   }
+
+  //   _updateDragForwardOrBackward(index);
+  //   _dragEndIndex = index;
+  // }
+
+  int lastIndex = -1;
+
   void updateDrag(int index) {
-    if (index < 0) return;
-    if ((_dragStartIndex == -1) || (_dragEndIndex == -1)) return;
-
-    // If the drag is both forward and backward, drag to the start index,
-    // and then continue the drag, whether it is forward or backward.
-    if ((index < dragStartIndex) && (index < dragEndIndex) ||
-        (index > dragStartIndex) && (index > dragEndIndex)) {
-      _updateDragForwardOrBackward(_dragStartIndex);
-      _dragEndIndex = _dragStartIndex;
-    }
-
-    _updateDragForwardOrBackward(index);
-    _dragEndIndex = index;
+    print(index);
+    if (index == lastIndex) return;
+    toggleSelect(index);
+    lastIndex = index;
   }
 
   /// Finishes the current drag.
   void endDrag() {
+    lastIndex = -1;
     _dragStartIndex = -1;
     _dragEndIndex = -1;
   }
@@ -107,27 +116,7 @@ class SelectionManager {
   /// versa). It's possible to do so by, while dragging, jumping from an index
   /// bigger than the start index to an index smaller that the start index.
   void _updateDragForwardOrBackward(int index) {
-    late final Set<int> indexesDraggedBy;
-
-    if (crossAxisCount == null) {
-      indexesDraggedBy = intSetFromRange(index, _dragEndIndex);
-    } else {
-      final c = crossAxisCount!;
-
-      final start = min(index, _dragEndIndex);
-      final end = max(index, _dragEndIndex);
-
-      if (start ~/ c == end ~/ c) {
-        indexesDraggedBy = intSetFromRange(start, end);
-      } else if (start % c == end % c) {
-        indexesDraggedBy = <int>{};
-        for (var i = start; i <= end; i += c) {
-          indexesDraggedBy.add(i);
-        }
-      } else {
-        indexesDraggedBy = {};
-      }
-    }
+    final indexesDraggedBy = intSetFromRange(index, _dragEndIndex);
 
     void removeIndexesDraggedByExceptTheCurrent() {
       indexesDraggedBy.remove(index);
